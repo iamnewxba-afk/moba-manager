@@ -45,7 +45,12 @@ function save(){
 }
 
 function log(msg){
-  logDiv.innerHTML += `<div>${msg}</div>`;
+  let div = document.getElementById("log");
+
+  let entry = document.createElement("div");
+  entry.innerHTML = "▶ " + msg;
+
+  div.prepend(entry);
 }
 
 // ===== UI =====
