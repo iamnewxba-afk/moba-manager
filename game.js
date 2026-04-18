@@ -61,21 +61,25 @@ function render(){
 }
 
 function renderTeam(){
-  let html = "<h2>Team</h2>";
+  let html = "<h2>🏆 Team Roster</h2>";
+
   team.forEach(p=>{
     let rank = ranks[p.rankIndex].name;
+
     html += `
     <div class="card">
-      <b>${p.name}</b> (${p.role})<br>
-      Rank: ${rank} ⭐${p.stars}<br>
-      Mechanics: ${p.mechanics}<br>
-      GameSense: ${p.gameSense}<br>
-      Teamwork: ${p.teamwork}<br>
-      Mentality: ${p.mentality}<br>
-      Fatigue: ${p.fatigue}
+      <h3>${p.name} (${p.role})</h3>
+      <p><b>Rank:</b> ${rank} ⭐${p.stars}</p>
+      <p>⚔ Mechanics: ${p.mechanics}</p>
+      <p>🧠 Game Sense: ${p.gameSense}</p>
+      <p>🤝 Teamwork: ${p.teamwork}</p>
+      <p>💬 Mentality: ${p.mentality}</p>
+      <p>⚡ Fatigue: ${p.fatigue}</p>
     </div>`;
   });
-  html += `<p>Team Synergy: ${synergy}</p>`;
+
+  html += `<div class="card"><b>Team Synergy:</b> ${synergy}</div>`;
+
   document.getElementById("team").innerHTML = html;
 }
 
