@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MOBA Manager - Team Shop</title>
+  <style>
+    :root { --primary: #FFB300; --bg: #121214; --surface: #1E1E24; --card: #282830; --text: #E0E0E0; --text-sec: #9E9E9E; --success: #00E676; }
+    body { background-color: var(--bg); color: var(--text); font-family: sans-serif; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+    .container { width: 100%; max-width: 900px; }
+    .back-btn { display: inline-block; background: #2a2a35; color: var(--text); padding: 8px 16px; border-radius: 6px; text-decoration: none; font-weight: bold; margin-bottom: 16px; border: 1px solid #424255; }
+    header { background: var(--surface); padding: 16px 24px; border-radius: 12px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; }
+    .shop-layout { display: grid; grid-template-columns: 200px 1fr; gap: 20px; }
+    
+    /* Category Sidebar */
+    .sidebar { background: var(--surface); border-radius: 12px; padding: 10px; height: fit-content; }
+    .cat-btn { width: 100%; padding: 15px; background: transparent; border: none; color: var(--text-sec); text-align: left; font-weight: bold; cursor: pointer; border-radius: 8px; margin-bottom: 5px; }
+    .cat-btn.active { background: var(--primary); color: #000; }
+    .cat-btn:hover:not(.active) { background: #2a2a35; color: var(--text); }
+
+    /* Item Grid */
+    .item-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; }
+    .item-card { background: var(--card); border-radius: 12px; padding: 15px; border: 1px solid #333; text-align: center; }
+    .item-card img { width: 60px; height: 60px; margin-bottom: 10px; filter: drop-shadow(0 0 5px var(--primary)); }
+    .item-name { font-weight: bold; display: block; margin-bottom: 5px; }
+    .item-desc { font-size: 0.75rem; color: var(--text-sec); display: block; margin-bottom: 10px; height: 32px; overflow: hidden; }
+    .item-price { color: var(--primary); font-weight: bold; font-size: 1.1rem; margin-bottom: 10px; display: block; }
+    .buy-btn { width: 100%; padding: 8px; background: #333; color: var(--text); border: 1px solid #444; border-radius: 6px; cursor: pointer; font-weight: bold; }
+    .buy-btn:hover { background: var(--success); color: #000; border-color: var(--success); }
+
+    .currency-display { background: #000; padding: 8px 16px; border-radius: 20px; color: var(--primary); font-weight: bold; border: 1px solid var(--primary); }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <a href="dashboard.html" class="back-btn">← Back to Dashboard</a>
+    
+    <header>
+      <div><h1 style="margin:0; color:var(--primary);">TEAM KIOSK</h1><p style="margin:0; font-size:0.8rem; color:var(--text-sec);">Upgrade your roster and facilities</p></div>
+      <div class="currency-display">💰 <span id="shopFunds">0</span> BP</div>
+    </header>
+
+    <div class="shop-layout">
+      <div class="sidebar">
+        <button class="cat-btn active" onclick="showCategory('dna', this)">🧬 DNA Upgrades</button>
+        <button class="cat-btn" onclick="showCategory('food', this)">🍔 Team Food</button>
+        <button class="cat-btn" onclick="showCategory('ranks', this)">⭐ Rank Boosters</button>
+      </div>
+
+      <div class="item-grid" id="itemGrid">
+        </div>
+    </div>
+  </div>
+
+  <script>
+    const inventory = {
+      dna: [
+        { name: "Focus Gene", desc: "+5% Micro mechanics", price: 1500 },
+        { name: "Teamwork DNA", desc: "+10% Team Chemistry", price: 3000 },
+        { name: "Reflex Alpha", desc: "+8% Reaction Speed", price: 5000 }
+      ],
+      food: [
+        { name: "Energy Drink", desc: "Instantly remove burnout", price: 200 },
+        { name: "Steak Dinner", desc: "+15% Morale for 1 week", price: 800 },
+        { name: "Gaming Snacks", desc: "Minor focus boost", price: 100 }
+      ],
+      ranks: [
+        { name: "Star Protection", desc: "No star loss for 1 loss", price: 1200 },
+        { name: "Double Star", desc: "Next win gives +2 stars", price: 2500 },
+        { name: "Mythic Entry Pass", desc: "Skip 1 Legend division", price: 15000 }
+      ]
+    };
+
+    let teamData = JSON.parse(localStorage.getItem('teamData'));
+
+    function updateFundsUI() {
+      document.getElementById('shopFunds').textContent = teamData.funds.toLocaleString();
+    }
+
+    function showCategory(cat, btn) {
+      // Update sidebar UI
+      document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const grid = document.getElementById('itemGrid');
+      grid.innerHTML = "";
+
+      inventory[cat].forEach(item => {
+        grid.innerHTML += `
+          <div class="item-card">
+            <span class="item-name">${item.name}</span>
+            <span class="item-desc">${item.desc}</span>
+            <span class="item-price">${item.price.toLocaleString()} BP</span>
+            <button class="buy-btn" onclick="buyItem('${item.name}', ${item.price})">PURCHASE</button>
+          </div>
+        `;
+      });
+    }
+
+    function buyItem(name, price) {
+      if (teamData.funds >= price) {
+        teamData.funds -= price;
+        localStorage.setItem('teamData', JSON.stringify(teamData));
+        updateFundsUI();
+        alert(`Successfully purchased ${name}!`);
+      } else {
+        alert("Inadequate funds (BP)!");
+      }
+    }
+
+    // Initialize
+    updateFundsUI();
+    showCategory('dna', document.querySelector('.cat-btn'));
+  </script>
+</body>
+</html>
