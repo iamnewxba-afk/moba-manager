@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MOBA Manager - Tournament Hub</title>
+  <style>
+    :root {
+      --primary: #FFB300;
+      --bg: #121214;
+      --surface: #1E1E24;
+      --surface-card: #282830;
+      --text: #E0E0E0;
+      --text-secondary: #9E9E9E;
+      --accent: #00E676;
+      --locked: #FF3B30;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1000px;
+    }
+
+    .back-btn {
+      display: inline-block;
+      background-color: #2a2a35;
+      color: var(--text);
+      padding: 8px 16px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: bold;
+      margin-bottom: 16px;
+      border: 1px solid #424255;
+      transition: all 0.2s;
+    }
+
+    .back-btn:hover {
+      background-color: var(--primary);
+      color: #000;
+      border-color: var(--primary);
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: var(--surface);
+      padding: 16px 24px;
+      border-radius: 12px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .team-info h1 {
+      margin: 0;
+      font-size: 1.5rem;
+      color: var(--primary);
+    }
+
+    .season-timeline {
+      display: flex;
+      justify-content: space-between;
+      background-color: var(--surface-card);
+      padding: 16px;
+      border-radius: 8px;
+      margin-bottom: 24px;
+      border: 1px solid #333;
+    }
+
+    .timeline-step {
+      text-align: center;
+      flex: 1;
+      position: relative;
+    }
+
+    .timeline-step:not(:last-child)::after {
+      content: "➔";
+      position: absolute;
+      right: -10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #555;
+    }
+
+    .step-active {
+      color: var(--primary);
+      font-weight: bold;
+    }
+
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .tournament-card {
+      background-color: var(--surface);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      border: 1px solid transparent;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .tournament-card:hover {
+      transform: translateY(-4px);
+      border-color: #424255;
+    }
+
+    .tournament-card.m-series {
+      border: 1px solid var(--primary);
+      background: linear-gradient(180deg, #282830 0%, #1a1a20 100%);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .card-header h3 {
+      margin: 0;
+      color: var(--text);
+    }
+
+    .m-series-title {
+      color: var(--primary) !important;
+      font-size: 1.4rem;
+    }
+
+    .status-badge {
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: bold;
+    }
+
+    .status-open { background-color: var(--accent); color: #000; }
+    .status-locked { background-color: var(--locked); color: #fff; }
+    .status-pending { background-color: #555; color: #fff; }
+
+    .tournament-desc {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-bottom: 16px;
+      line-height: 1.4;
+    }
+
+    .prize-pool {
+      font-weight: bold;
+      color: var(--primary);
+      margin-bottom: 16px;
+      font-size: 0.9rem;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #2a2a35;
+      color: var(--text);
+      border: 1px solid #424255;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    button:hover:not(:disabled) {
+      background-color: var(--primary);
+      color: #000;
+      border-color: var(--primary);
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .world-champ-controls {
+      margin-top: 30px;
+      text-align: center;
+      padding: 20px;
+      background-color: var(--surface-card);
+      border-radius: 8px;
+      border: 1px dashed var(--primary);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <a href="dashboard.html" class="back-btn">← Back to Dashboard</a>
+
+    <header>
+      <div class="team-info">
+        <h1>TOURNAMENT HUB</h1>
+        <p>Manage your entry into regional and international leagues.</p>
+      </div>
+    </header>
+
+    <div class="season-timeline">
+      <div class="timeline-step step-active">Pre-Season / Scrims</div>
+      <div class="timeline-step">MPL Regular Season</div>
+      <div class="timeline-step">MPL Playoffs</div>
+      <div class="timeline-step">MSC (Mid-Season)</div>
+      <div class="timeline-step" style="color: var(--primary); font-weight: bold;" id="timelineMSeries">M-Series</div>
+    </div>
+
+    <div class="grid-container">
+      
+      <div class="tournament-card">
+        <div class="card-header">
+          <h3>MPL Philippines</h3>
+          <span class="status-badge status-open">REGISTRATION OPEN</span>
+        </div>
+        <p class="tournament-desc">The official regional league. Battle through an 8-week regular season and secure a spot in the playoffs.</p>
+        <div class="prize-pool">🏆 Prize Pool: 150,000 BP</div>
+        <button onclick="alert('Registering for MPL PH...')">Enter Franchise</button>
+      </div>
+
+      <div class="tournament-card">
+        <div class="card-header">
+          <h3>MSC (Mid-Season Cup)</h3>
+          <span class="status-badge status-locked">LOCKED</span>
+        </div>
+        <p class="tournament-desc">Southeast Asia's finest clash in the mid-season. Qualification requires finishing Top 2 in the MPL.</p>
+        <div class="prize-pool">🏆 Prize Pool: 300,000 BP</div>
+        <button disabled>Requires MPL Qualification</button>
+      </div>
+
+      <div class="tournament-card">
+        <div class="card-header">
+          <h3>Snapdragon Pro Series</h3>
+          <span class="status-badge status-open">INVITATIONAL</span>
+        </div>
+        <p class="tournament-desc">A major 3rd-party tournament held between seasons. Great for building popularity and earning extra funds.</p>
+        <div class="prize-pool">🏆 Prize Pool: 100,000 BP</div>
+        <button onclick="alert('Joining Snapdragon Open Qualifiers...')">Join Qualifiers</button>
+      </div>
+
+      <div class="tournament-card m-series">
+        <div class="card-header">
+          <h3 class="m-series-title" id="mSeriesTitle">M0 World Championship</h3>
+          <span class="status-badge status-pending" id="mSeriesStatus">PRE-INAUGURAL</span>
+        </div>
+        <p class="tournament-desc">The pinnacle of MLBB Esports. Win the MPL to secure your ticket to the grandest stage of them all.</p>
+        <div class="prize-pool">🏆 Prize Pool: 1,000,000+ BP</div>
+        <button disabled id="mSeriesBtn">Awaiting M1 Season</button>
+      </div>
+
+    </div>
+
+    <div class="world-champ-controls">
+      <h3 style="color: var(--text); margin-top:0;">Time Simulation (Dev Tool)</h3>
+      <p style="font-size: 0.85rem; color: var(--text-secondary);">Currently at M-Series state: <span id="currentMState">0</span></p>
+      <button onclick="startMSeries()" style="width: auto; padding: 10px 20px;">Advance to Next M-Series Year</button>
+    </div>
+
+  </div>
+
+  <script>
+    // Logic for tracking M0, M1, M2...
+    let currentMSeries = 0; 
+    
+    // Check if we have saved timeline data
+    const savedMSeries = localStorage.getItem('mSeriesLevel');
+    if (savedMSeries !== null) {
+      currentMSeries = parseInt(savedMSeries);
+      updateMSeriesUI();
+    }
+
+    function updateMSeriesUI() {
+      const titleEl = document.getElementById('mSeriesTitle');
+      const statusEl = document.getElementById('mSeriesStatus');
+      const btnEl = document.getElementById('mSeriesBtn');
+      const stateEl = document.getElementById('currentMState');
+      const timelineEl = document.getElementById('timelineMSeries');
+
+      stateEl.textContent = currentMSeries;
+
+      if (currentMSeries === 0) {
+        titleEl.textContent = "M0 World Championship";
+        statusEl.textContent = "PRE-INAUGURAL";
+        statusEl.className = "status-badge status-pending";
+        btnEl.disabled = true;
+        btnEl.textContent = "Awaiting M1 Season";
+        timelineEl.textContent = "World Championship";
+      } else {
+        titleEl.textContent = `M${currentMSeries} World Championship`;
+        statusEl.textContent = "QUALIFIERS PENDING";
+        statusEl.className = "status-badge status-locked"; // Locked until MPL is won
+        btnEl.disabled = true;
+        btnEl.textContent = "Requires MPL Champion Status";
+        timelineEl.textContent = `M${currentMSeries} Worlds`;
+      }
+    }
+
+    function startMSeries() {
+      // Advance to the next M-series year
+      currentMSeries++;
+      localStorage.setItem('mSeriesLevel', currentMSeries);
+      updateMSeriesUI();
+      
+      if(currentMSeries === 1) {
+        alert("The World Championship has officially begun! Welcome to M1!");
+      } else {
+        alert(`A new competitive year begins. Advancing to M${currentMSeries}!`);
+      }
+    }
+  </script>
+
+</body>
+</html>
