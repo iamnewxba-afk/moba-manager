@@ -1,26 +1,207 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>MOBA Esports Manager</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MOBA Manager - Team Setup</title>
+  <style>
+    :root {
+      --primary: #FFB300;
+      --bg: #121214;
+      --surface: #1E1E24;
+      --text: #E0E0E0;
+      --text-secondary: #9E9E9E;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      background-color: var(--surface);
+      padding: 24px;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    }
+
+    h2 {
+      color: var(--primary);
+      margin-top: 0;
+      text-align: center;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    input[type="text"], input[type="date"] {
+      width: 100%;
+      padding: 10px;
+      background-color: #2a2a35;
+      border: 1px solid #3a3a45;
+      border-radius: 6px;
+      color: var(--text);
+      box-sizing: border-box;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .file-dropzone {
+      border: 2px dashed #424255;
+      padding: 20px;
+      text-align: center;
+      border-radius: 8px;
+      cursor: pointer;
+      background-color: #2a2a35;
+      margin-bottom: 16px;
+    }
+
+    .roster-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+    }
+
+    .roster-table th, .roster-table td {
+      padding: 8px;
+      border-bottom: 1px solid #2a2a35;
+      font-size: 0.85rem;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: var(--primary);
+      color: #000;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+  </style>
 </head>
 <body>
 
-<h1>MOBA Esports Manager</h1>
+  <div class="container">
+    <h2>CREATE TEAM</h2>
+    <form id="team-form">
+      
+      <div class="form-group">
+        <label>Team Name</label>
+        <input type="text" id="teamName" placeholder="Onic Esports PH" required>
+      </div>
 
-<div class="tabs">
-  <button onclick="showTab('team')">Team</button>
-  <button onclick="showTab('actions')">Actions</button>
-  <button onclick="showTab('tournament')">Tournament</button>
-</div>
+      <div class="form-group">
+        <label>Short Name (Max 10 characters)</label>
+        <input type="text" id="shortName" maxlength="10" placeholder="ONIC PH" required>
+      </div>
 
-<div id="team" class="tab"></div>
-<div id="actions" class="tab"></div>
-<div id="tournament" class="tab"></div>
+      <div class="form-group">
+        <label>Manager Name</label>
+        <input type="text" id="managerName" placeholder="John Doe" required>
+      </div>
 
-<h2>Log</h2>
-<div id="log"></div>
+      <div class="form-group">
+        <label>Creation Date</label>
+        <input type="date" id="creationDate" required>
+      </div>
 
-<script src="game.js"></script>
+      <div class="form-group">
+        <label>Team Logo</label>
+        <div class="file-dropzone" onclick="document.getElementById('teamLogo').click()">
+          <p>Click or Drop to Upload Logo</p>
+          <input type="file" id="teamLogo" accept="image/*" style="display: none;">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Initial Roster Setup</label>
+        <table class="roster-table">
+          <thead>
+            <tr>
+              <th>Role</th>
+              <th>Player Name</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>EXP Laner</td>
+              <td><input type="text" placeholder="EXP Laner Name" required /></td>
+            </tr>
+            <tr>
+              <td>Jungler</td>
+              <td><input type="text" placeholder="Jungler Name" required /></td>
+            </tr>
+            <tr>
+              <td>Mid Laner</td>
+              <td><input type="text" placeholder="Mid Laner Name" required /></td>
+            </tr>
+            <tr>
+              <td>Gold Laner</td>
+              <td><input type="text" placeholder="Gold Laner Name" required /></td>
+            </tr>
+            <tr>
+              <td>Roamer</td>
+              <td><input type="text" placeholder="Roamer Name" required /></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <button type="submit">Save Team</button>
+    </form>
+  </div>
+
+  <script>
+    // Automatically set the creation date to today's date
+    document.getElementById('creationDate').valueAsDate = new Date();
+
+    document.getElementById('team-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const teamData = {
+        name: document.getElementById('teamName').value,
+        shortName: document.getElementById('shortName').value,
+        manager: document.getElementById('managerName').value,
+        created: document.getElementById('creationDate').value,
+        roster: {
+          expLaner: document.querySelectorAll('tbody input')[0].value,
+          jungler: document.querySelectorAll('tbody input')[1].value,
+          midLaner: document.querySelectorAll('tbody input')[2].value,
+          goldLaner: document.querySelectorAll('tbody input')[3].value,
+          roamer: document.querySelectorAll('tbody input')[4].value
+        }
+      };
+      
+      console.log('Team data prepared: ', teamData);
+      alert('Team configuration saved! View the console for the data object.');
+    });
+  </script>
+
 </body>
 </html>
