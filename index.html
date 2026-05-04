@@ -195,11 +195,15 @@
           midLaner: document.querySelectorAll('tbody input')[2].value,
           goldLaner: document.querySelectorAll('tbody input')[3].value,
           roamer: document.querySelectorAll('tbody input')[4].value
-        }
+        },
+        funds: 10000 // Initial starting funds
       };
       
-      console.log('Team data prepared: ', teamData);
-      alert('Team configuration saved! View the console for the data object.');
+      // Save data locally in the browser
+      localStorage.setItem('teamData', JSON.stringify(teamData));
+      
+      // Redirect to the dashboard
+      window.location.href = 'dashboard.html';
     });
   </script>
 
