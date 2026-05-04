@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MOBA Manager - Team Room</title>
+  <style>
+    :root {
+      --primary: #FFB300;
+      --bg: #121214;
+      --surface: #1E1E24;
+      --surface-card: #282830;
+      --text: #E0E0E0;
+      --text-secondary: #9E9E9E;
+      --accent: #00E676;
+      --danger: #FF3B30;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1100px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: var(--surface);
+      padding: 16px 24px;
+      border-radius: 12px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .team-info h1 {
+      margin: 0;
+      font-size: 1.5rem;
+      color: var(--primary);
+    }
+
+    .team-info p {
+      margin: 4px 0 0;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .currency-tag {
+      background-color: #2a2a35;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: bold;
+      color: var(--primary);
+      border: 1px solid var(--primary);
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .tab-btn {
+      background-color: var(--surface);
+      color: var(--text-secondary);
+      border: 1px solid #424255;
+      padding: 10px 20px;
+      border-radius: 8px 8px 0 0;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background-color: var(--surface-card);
+      color: var(--primary);
+      border-color: var(--primary) var(--primary) transparent var(--primary);
+    }
+
+    .grid-container {
+      display: grid;
+      grid-template-columns: 1fr 2.5fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 900px) {
+      .grid-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .panel {
+      background-color: var(--surface-card);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      border: 1px solid #282830;
+    }
+
+    h3 {
+      color: var(--primary);
+      margin-top: 0;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .stat-bar {
+      margin-bottom: 12px;
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    .progress-outer {
+      background-color: #1a1a20;
+      border-radius: 4px;
+      height: 8px;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .progress-inner {
+      background-color: var(--primary);
+      height: 100%;
+    }
+
+    .roster-table, .activity-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .roster-table th, .roster-table td, 
+    .activity-table th, .activity-table td {
+      padding: 12px 10px;
+      font-size: 0.85rem;
+      border-bottom: 1px solid #32323e;
+      text-align: left;
+    }
+
+    .roster-table th, .activity-table th {
+      color: var(--text-secondary);
+    }
+
+    .badge {
+      background-color: var(--accent);
+      color: #000;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: bold;
+    }
+
+    .badge-secondary {
+      background-color: var(--primary);
+      color: #000;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: bold;
+    }
+
+    .btn-action {
+      width: 100%;
+      padding: 10px;
+      background-color: #2a2a35;
+      color: var(--text);
+      border: 1px solid #424255;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-bottom: 8px;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .btn-action:hover {
+      background-color: var(--primary);
+      color: #000;
+      border-color: var(--primary);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    select {
+      background: #2a2a35;
+      color: var(--text);
+      border: 1px solid #424255;
+      padding: 4px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    select:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .rank-badge {
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+    }
+    .rank-warrior { background: #8B4513; color: #fff; }
+    .rank-grandmaster { background: #4682B4; color: #fff; }
+    .rank-epic { background: #B8860B; color: #fff; }
+    .rank-legend { background: #A9A9A9; color: #000; }
+    .rank-mythic { background: #4B0082; color: #fff; }
+    .rank-honor { background: #9400D3; color: #fff; }
+    .rank-glory { background: #FFD700; color: #000; }
+    .rank-immortal { background: #000; color: #fff; border: 1px solid var(--primary); }
+
+    .stat-pill {
+      background: #2a2a35;
+      padding: 6px 12px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      margin-bottom: 8px;
+      display: inline-block;
+      border: 1px solid #333;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <div class="team-info">
+        <h1>TEAM ROOM MLBB PROFESSIONAL LEAGUE</h1>
+        <p>Owner: Onic Esports PH</p>
+      </div>
+      <div class="currency-tag">
+        💰 16.2 M$
+      </div>
+    </header>
+
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('roster')">Roster Tab</button>
+      <button class="tab-btn" onclick="switchTab('activity')">Activity Tab</button>
+    </div>
+
+    <div class="grid-container">
+      <div class="panel">
+        <h3>TEAM LEVEL 71</h3>
+        <div class="stat-bar">
+          <span class="stat-label">Reputation (69)</span>
+          <div class="progress-outer"><div class="progress-inner" style="width: 69%;"></div></div>
+        </div>
+        <div class="stat-bar">
+          <span class="stat-label">Followers: 638.8 K</span>
+          <div class="progress-outer"><div class="progress-inner" style="width: 80%;"></div></div>
+        </div>
+        <hr style="border: 0; border-top: 1px solid #32323e; margin: 16px 0;">
+        <button class="btn-action" onclick="alert('Player Search')">Player Search</button>
+        <button class="btn-action" onclick="alert('Coach Search')">Coach Search</button>
+        <button class="btn-action" onclick="alert('Transfer Offers')">Transfer Offers</button>
+      </div>
+
+      <div class="panel" style="min-height: 380px;">
+        
+        <div id="rosterTab" class="tab-content active">
+          <h3>ROSTER MANAGEMENT</h3>
+          <table class="roster-table">
+            <thead>
+              <tr>
+                <th>Player</th>
+                <th>Status</th>
+                <th>Role</th>
+                <th>MLBB Rank</th>
+                <th>Pop.</th>
+                <th>Rat.</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Spabroq</td>
+                <td><span class="badge">STARTER</span></td>
+                <td>Gold Laner</td>
+                <td><span class="rank-badge rank-honor">Mythical Honor (38★)</span></td>
+                <td>122k</td>
+                <td>6.0</td>
+              </tr>
+              <tr>
+                <td>Colp</td>
+                <td><span class="badge">STARTER</span></td>
+                <td>Jungler</td>
+                <td><span class="rank-badge rank-glory">Mythical Glory (64★)</span></td>
+                <td>89k</td>
+                <td>5.3</td>
+              </tr>
+              <tr>
+                <td>Artash</td>
+                <td><span class="badge">STARTER</span></td>
+                <td>Mid Laner</td>
+                <td><span class="rank-badge rank-immortal">Immortal (112★)</span></td>
+                <td>240k</td>
+                <td>6.2</td>
+              </tr>
+              <tr>
+                <td>Ityh</td>
+                <td><span class="badge">STARTER</span></td>
+                <td>EXP Laner</td>
+                <td><span class="rank-badge rank-mythic">Mythic (12★)</span></td>
+                <td>45k</td>
+                <td>6.8</td>
+              </tr>
+              <tr>
+                <td>Shed</td>
+                <td><span class="badge-secondary">SUB</span></td>
+                <td>Roamer</td>
+                <td><span class="rank-badge rank-legend">Legend IV</span></td>
+                <td>20k</td>
+                <td>5.8</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div id="activityTab" class="tab-content">
+          <h3>WEEKLY ACTIVITY SCHEDULE</h3>
+          <table class="activity-table">
+            <thead>
+              <tr>
+                <th>Day</th>
+                <th>Activity Type</th>
+                <th>Action/Details</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Monday</td>
+                <td>
+                  <select>
+                    <option selected>Rank Grind</option>
+                    <option>Team Scrim</option>
+                    <option>Team Training</option>
+                    <option>Team Bonding</option>
+                    <option>Rest</option>
+                  </select>
+                </td>
+                <td><span class="badge" style="background:#00E676; color:#000;">Active: +3 Rank Ups</span></td>
+              </tr>
+              <tr>
+                <td>Tuesday</td>
+                <td>
+                  <select>
+                    <option>Rank Grind</option>
+                    <option selected>Team Scrim</option>
+                    <option>Team Training</option>
+                    <option>Team Bonding</option>
+                    <option>Rest</option>
+                  </select>
+                </td>
+                <td>
+                  Opponent: 
+                  <select style="font-size: 0.75rem;">
+                    <option>BTR Alpha (80% accept)</option>
+                    <option>Smart Omega (30% accept)</option>
+                    <option>Echo PH (60% accept)</option>
+                  </select>
+                </td>
+              </tr>
+              <tr>
+                <td>Wednesday</td>
+                <td>
+                  <select>
+                    <option>Rank Grind</option>
+                    <option>Team Scrim</option>
+                    <option selected>Team Training</option>
+                    <option>Team Bonding</option>
+                    <option>Rest</option>
+                  </select>
+                </td>
+                <td>Focus: Macro Strategy & Team Fights</td>
+              </tr>
+              <tr>
+                <td>Thursday</td>
+                <td>
+                  <select>
+                    <option>Rank Grind</option>
+                    <option>Team Scrim</option>
+                    <option>Team Training</option>
+                    <option selected>Team Bonding</option>
+                    <option>Rest</option>
+                  </select>
+                </td>
+                <td>Boosts team chemistry and morale</td>
+              </tr>
+              <tr>
+                <td>Friday</td>
+                <td>
+                  <select>
+                    <option>Rank Grind</option>
+                    <option>Team Scrim</option>
+                    <option>Team Training</option>
+                    <option>Team Bonding</option>
+                    <option selected>Rest</option>
+                  </select>
+                </td>
+                <td>Prevents player burnout</td>
+              </tr>
+            </tbody>
+          </table>
+          <button class="btn-action" style="margin-top: 16px; background: var(--primary); color: #000; border: none;" onclick="alert('Schedule saved successfully!')">Save Weekly Schedule</button>
+        </div>
+
+      </div>
+
+      <div class="panel">
+        <h3>SPABROQ</h3>
+        <p style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:16px;">Gold Laner • 20 y.o. • Instinctive</p>
+        
+        <div style="margin-bottom: 12px;">
+          <span class="stat-pill" style="color:var(--primary);">Popularity: 122,000 (Fans)</span><br>
+          <span class="stat-pill">Level: 69 / Potential: 69</span><br>
+          <span class="stat-pill">Ambition: 87 | Charisma: 42</span><br>
+          <span class="stat-pill">Team Spirit: 65 | Clutch: 31%</span>
+        </div>
+
+        <button class="btn-action" onclick="alert('Player Editor')">Player Editor</button>
+        <button class="btn-action" onclick="alert('Transfer List')">Put on Transfer List</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function switchTab(tabName) {
+      // Deactivate all tabs & buttons
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+
+      // Activate selected
+      if (tabName === 'roster') {
+        document.getElementById('rosterTab').classList.add('active');
+        event.target.classList.add('active');
+      } else if (tabName === 'activity') {
+        document.getElementById('activityTab').classList.add('active');
+        event.target.classList.add('active');
+      }
+    }
+  </script>
+
+</body>
+</html>
