@@ -156,5 +156,18 @@
     </div>
   </div>
 
+  <script>
+    // Retrieve data when the page loads
+    const savedData = localStorage.getItem('teamData');
+
+    if (savedData) {
+      const teamData = JSON.parse(savedData);
+
+      // Update elements on the dashboard
+      document.getElementById('displayTeamName').textContent = teamData.name;
+      document.getElementById('displayManagerName').textContent = teamData.manager;
+      document.getElementById('displayFunds').textContent = Number(teamData.funds).toLocaleString();
+    }
+  </script>
 </body>
 </html>
