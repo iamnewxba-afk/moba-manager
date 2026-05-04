@@ -33,6 +33,26 @@
       max-width: 1100px;
     }
 
+    .back-btn {
+      display: inline-block;
+      background-color: #2a2a35;
+      color: var(--text);
+      padding: 8px 16px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: bold;
+      margin-bottom: 16px;
+      border: 1px solid #424255;
+      transition: all 0.2s;
+    }
+
+    .back-btn:hover {
+      background-color: var(--primary);
+      color: #000;
+      border-color: var(--primary);
+    }
+
     header {
       display: flex;
       justify-content: space-between;
@@ -246,13 +266,16 @@
 <body>
 
   <div class="container">
+    
+    <a href="dashboard.html" class="back-btn">← Back to Dashboard</a>
+
     <header>
       <div class="team-info">
         <h1>TEAM ROOM MLBB PROFESSIONAL LEAGUE</h1>
-        <p>Owner: Onic Esports PH</p>
+        <p>Owner: <span id="roomTeamName">Loading...</span></p>
       </div>
       <div class="currency-tag">
-        💰 16.2 M$
+        💰 <span id="roomFunds">0</span> BP
       </div>
     </header>
 
@@ -446,12 +469,18 @@
   </div>
 
   <script>
+    // Load Team Data 
+    const savedData = localStorage.getItem('teamData');
+    if (savedData) {
+      const teamData = JSON.parse(savedData);
+      document.getElementById('roomTeamName').textContent = teamData.name;
+      document.getElementById('roomFunds').textContent = Number(teamData.funds).toLocaleString();
+    }
+
     function switchTab(tabName) {
-      // Deactivate all tabs & buttons
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
 
-      // Activate selected
       if (tabName === 'roster') {
         document.getElementById('rosterTab').classList.add('active');
         event.target.classList.add('active');
